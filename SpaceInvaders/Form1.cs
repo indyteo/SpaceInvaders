@@ -1,123 +1,105 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
 
-namespace SpaceInvaders
-{
-    public partial class GameForm : Form
-    {
+namespace SpaceInvaders {
+	public partial class GameForm : Form {
+		/// <summary>
+		///     The background image where everything is displayed (canvas)
+		/// </summary>
+		private Bitmap background;
 
-        #region fields
+		/// <summary>
+		///     The graphics from the background image
+		/// </summary>
+		private Graphics graphics;
+
         /// <summary>
-        /// Instance of the game
+        ///     Create form, create game
         /// </summary>
-        private Game game;
+        public GameForm() {
+			this.InitializeComponent();
+			this.background = new Bitmap(this.ClientSize.Width, this.ClientSize.Height, PixelFormat.Format32bppArgb);
+			this.graphics = Graphics.FromImage(this.background);
+			this.game = new SpaceInvaders(this.ClientSize, this.graphics);
+			this.watch.Start();
+			this.WorldClock.Start();
+		}
 
-        #region time management
         /// <summary>
-        /// Game watch
+        ///     Instance of the game
         /// </summary>
-        Stopwatch watch = new Stopwatch();
+        private readonly SpaceInvaders game;
 
         /// <summary>
-        /// Last update time
+        ///     Game watch
         /// </summary>
-        long lastTime = 0;
-        #endregion
-           
-        #endregion
+        private readonly Stopwatch watch = new Stopwatch();
 
-        #region constructor
         /// <summary>
-        /// Create form, create game
+        ///     Last update time
         /// </summary>
-        public GameForm()
-        {
-            InitializeComponent();
-            game = Game.CreateGame(this.ClientSize);
-            watch.Start();
-            WorldClock.Start();
-
-        }
-        #endregion
-
-        #region events
-        /// <summary>
-        /// Paint event of the form, see msdn for help => paint game with double buffering
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GameForm_Paint(object sender, PaintEventArgs e)
-        {
-            BufferedGraphics bg = BufferedGraphicsManager.Current.Allocate(e.Graphics, e.ClipRectangle);
-            Graphics g = bg.Graphics;
-            g.Clear(Color.White);
-
-            game.Draw(g);
-
-            bg.Render();
-            bg.Dispose();
-
-        }
+        private long lastTime;
 
         /// <summary>
-        /// Tick event => update game
+        ///     Paint event of the form, see msdn for help => paint game with double buffering
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void WorldClock_Tick(object sender, EventArgs e)
-        {
-            // lets do 5 ms update to avoid quantum effects
-            int maxDelta = 5;
+        private void GameForm_Paint(object sender, PaintEventArgs e) {
+	        BufferedGraphics bg = BufferedGraphicsManager.Current.Allocate(e.Graphics, e.ClipRectangle);
+	        Graphics g = bg.Graphics;
+	        g.Clear(Color.White);
 
-            // get time with millisecond precision
-            long nt = watch.ElapsedMilliseconds;
-            // compute ellapsed time since last call to update
-            double deltaT = (nt - lastTime);
+	        g.DrawImage(this.background, 0, 0, this.ClientSize.Width, this.ClientSize.Height);
 
-            for (; deltaT >= maxDelta; deltaT -= maxDelta)
-                game.Update(maxDelta / 1000.0);
-
-            game.Update(deltaT / 1000.0);
-
-            // remember the time of this update
-            lastTime = nt;
-
-            Invalidate();
-
+	        bg.Render();
+	        bg.Dispose();
         }
 
         /// <summary>
-        /// Key down event
+        ///     Tick event => update game
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void GameForm_KeyDown(object sender, KeyEventArgs e)
-        {
-            game.keyPressed.Add(e.KeyCode);
-        }
+        private void WorldClock_Tick(object sender, EventArgs e) {
+	        this.graphics.Clear(Color.White);
+			// lets do 5 ms update to avoid quantum effects
+			var maxDelta = 5;
+
+			// get time with millisecond precision
+			long nt = this.watch.ElapsedMilliseconds;
+			// compute ellapsed time since last call to update
+			double deltaT = nt - this.lastTime;
+
+			for (; deltaT >= maxDelta; deltaT -= maxDelta)
+				this.game.Update(maxDelta / 1000.0);
+			this.game.Update(deltaT / 1000.0);
+
+			// remember the time of this update
+			this.lastTime = nt;
+
+			this.Invalidate();
+		}
 
         /// <summary>
-        /// Key up event
+        ///     Key down event
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void GameForm_KeyUp(object sender, KeyEventArgs e)
-        {
-            game.keyPressed.Remove(e.KeyCode);
-        }
+        private void GameForm_KeyDown(object sender, KeyEventArgs e) {
+			this.game.PressKey(e.KeyCode);
+		}
 
-        #endregion
-
-        private void GameForm_Load(object sender, EventArgs e)
-        {
-
-        }
-    }
+        /// <summary>
+        ///     Key up event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GameForm_KeyUp(object sender, KeyEventArgs e) {
+			this.game.ReleaseKey(e.KeyCode);
+		}
+	}
 }

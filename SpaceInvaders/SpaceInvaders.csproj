@@ -46,17 +46,55 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
+    <Compile Include="ECS\Component.cs" />
+    <Compile Include="ECS\Components\ChildrenComponent.cs" />
+    <Compile Include="ECS\Components\DisplayComponent.cs" />
+    <Compile Include="ECS\Components\GameComponent.cs" />
+    <Compile Include="ECS\Components\HealthComponent.cs" />
+    <Compile Include="ECS\Components\MotionComponent.cs" />
+    <Compile Include="ECS\Components\PositionComponent.cs" />
+    <Compile Include="ECS\Components\SideComponent.cs" />
+    <Compile Include="ECS\Components\SizeComponent.cs" />
+    <Compile Include="ECS\Engine.cs" />
+    <Compile Include="ECS\Entities\EntityCreator.cs" />
+    <Compile Include="ECS\Entities\EntityType.cs" />
+    <Compile Include="ECS\Entity.cs" />
+    <Compile Include="ECS\Node.cs" />
+    <Compile Include="ECS\Nodes\CollisionNode.cs" />
+    <Compile Include="ECS\Nodes\EnemyMovementNode.cs" />
+    <Compile Include="ECS\Nodes\GameNode.cs" />
+    <Compile Include="ECS\Nodes\ParentNode.cs" />
+    <Compile Include="ECS\Nodes\SoulNode.cs" />
+    <Compile Include="ECS\Nodes\EnemyShootNode.cs" />
+    <Compile Include="ECS\Nodes\LinearMovementNode.cs" />
+    <Compile Include="ECS\Nodes\RenderNode.cs" />
+    <Compile Include="ECS\Nodes\SpaceshipControlNode.cs" />
+    <Compile Include="ECS\System.cs" />
+    <Compile Include="ECS\Systems\ChildrenGraveyardSystem.cs" />
+    <Compile Include="ECS\Systems\CollisionSystem.cs" />
+    <Compile Include="ECS\Systems\EnemyMovementSystem.cs" />
+    <Compile Include="ECS\Systems\EnemyShootSystem.cs" />
+    <Compile Include="ECS\Systems\GameControlSystem.cs" />
+    <Compile Include="ECS\Systems\GameOverlaySystem.cs" />
+    <Compile Include="ECS\Systems\GrimReaperSystem.cs" />
+    <Compile Include="ECS\Systems\LinearMovementSystem.cs" />
+    <Compile Include="ECS\Systems\PauseControlSystem.cs" />
+    <Compile Include="ECS\Systems\RenderSystem.cs" />
+    <Compile Include="ECS\Systems\SpaceshipControlSystem.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Game.cs" />
-    <Compile Include="GameObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BalleQuiTombe.cs" />
+    <Compile Include="SpaceInvaders.cs" />
+    <Compile Include="Utils\ClassListMap.cs" />
+    <Compile Include="Utils\ClassMap.cs" />
+    <Compile Include="Utils\Util.cs" />
+    <Compile Include="Utils\Vector2D.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -70,7 +108,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -131,10 +168,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
 </Project>
