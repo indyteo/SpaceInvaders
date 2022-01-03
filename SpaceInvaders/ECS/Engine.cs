@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using SpaceInvaders.ECS.Entities;
-using SpaceInvaders.ECS.Nodes;
 using SpaceInvaders.Utils;
 
 namespace SpaceInvaders.ECS {
@@ -143,35 +142,7 @@ namespace SpaceInvaders.ECS {
 	            Node node = Activator.CreateInstance(nodeRequirement) as Node;
 	            if (node != null) {
             		node.Initialize(entity);
-
-                    #region C# is bad
-                    // You think this is not pretty? Of course, me too, but C# is bad: it allow neither List<?> nor List<? extends X>, R.I.P :'(
-                    if (node is SpaceshipCollisionNode)
-                        this.nodes.Add(node as SpaceshipCollisionNode);
-                    else if (node is BunkerCollisionNode)
-                        this.nodes.Add(node as BunkerCollisionNode);
-                    else if (node is MissileCollisionNode)
-                        this.nodes.Add(node as MissileCollisionNode);
-                    else if (node is EnemyMovementNode)
-                        this.nodes.Add(node as EnemyMovementNode);
-                    else if (node is EnemyShootNode)
-                        this.nodes.Add(node as EnemyShootNode);
-                    else if (node is GameNode)
-                        this.nodes.Add(node as GameNode);
-                    else if (node is LinearMovementNode)
-                        this.nodes.Add(node as LinearMovementNode);
-                    else if (node is ParentNode)
-                        this.nodes.Add(node as ParentNode);
-                    else if (node is RenderNode)
-                        this.nodes.Add(node as RenderNode);
-                    else if (node is SoulNode)
-                        this.nodes.Add(node as SoulNode);
-                    else if (node is SpaceshipControlNode)
-                        this.nodes.Add(node as SpaceshipControlNode);
-                    #endregion
-
-                    // If C# was as good as Java, we would have done:
-            		// this.nodes.Add(node);
+            		this.nodes.Add(node);
 	            }
 			}
 		}
@@ -190,36 +161,8 @@ namespace SpaceInvaders.ECS {
 		/// </summary>
 		/// <param name="entity">The entity from which remove nodes</param>
 		private void RemoveNodes(Entity entity) {
-			foreach (Type/* ? extends Node */ nodeRequirement in EntityCreator.NodeRequirements[entity.Type]) {
-				#region C# is bad
-				// You think this is not pretty? Of course, me too, but C# is bad: it allow neither List<?> nor List<? extends X>, R.I.P :'(
-				if (nodeRequirement == typeof(SpaceshipCollisionNode))
-					this.nodes.Get<SpaceshipCollisionNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(BunkerCollisionNode))
-					this.nodes.Get<BunkerCollisionNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(MissileCollisionNode))
-					this.nodes.Get<MissileCollisionNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(EnemyMovementNode))
-					this.nodes.Get<EnemyMovementNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(EnemyShootNode))
-					this.nodes.Get<EnemyShootNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(GameNode))
-					this.nodes.Get<GameNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(LinearMovementNode))
-					this.nodes.Get<LinearMovementNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(ParentNode))
-					this.nodes.Get<ParentNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(RenderNode))
-					this.nodes.Get<RenderNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(SoulNode))
-					this.nodes.Get<SoulNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				else if (nodeRequirement == typeof(SpaceshipControlNode))
-					this.nodes.Get<SpaceshipControlNode>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-				#endregion
-
-				// If C# was as good as Java, we would have done:
-				// this.nodes.Get<Node>(nodeRequirement).RemoveAll(node => node.Source == entity.Id);
-			}
+			foreach (Type/* ? extends Node */ nodeRequirement in EntityCreator.NodeRequirements[entity.Type])
+				this.nodes.Remove(nodeRequirement, node => node.Source == entity.Id);
 		}
 
 		/// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SpaceInvaders.Utils {
 	public class ClassListMap<T> {
@@ -19,12 +20,37 @@ namespace SpaceInvaders.Utils {
 			return list;
 		}
 
-		public void Add<U>(U value) where U : T {
-			this.Get<U>(value.GetType()).Add(value);
+		public void Add(T value) {
+			Type type = value.GetType();
+			Type listType = typeof(List<>).MakeGenericType(type);
+			object list;
+			if (!this.values.TryGetValue(type, out list))
+				this.values[type] = list = Activator.CreateInstance(listType);
+
+			MethodInfo method = listType.GetMethod("Add", new [] { type });
+			if (method != null)
+				method.Invoke(list, new object[] { value });
 		}
 
-		public void Remove<U>(U value) where U : T {
-			((List<U>) this.values[value.GetType()]).Remove(value);
+		public void Remove(T value) {
+			Type type = value.GetType();
+			Type listType = typeof(List<>).MakeGenericType(type);
+			object list;
+			if (this.values.TryGetValue(type, out list)) {
+				MethodInfo method = listType.GetMethod("Remove", new [] { type });
+                if (method != null)
+                	method.Invoke(list, new object[] { value });
+			}
+		}
+
+		public void Remove(Type/* ? extends T */ type, Predicate<T> condition) {
+			Type listType = typeof(List<>).MakeGenericType(type);
+			object list;
+			if (this.values.TryGetValue(type, out list)) {
+				MethodInfo method = listType.GetMethod("RemoveAll", new [] { typeof(Predicate<>).MakeGenericType(type) });
+				if (method != null)
+					method.Invoke(list, new object[] { condition });
+			}
 		}
 	}
 }
